@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 public class Simulator : MonoBehaviour
@@ -25,6 +26,8 @@ public class Simulator : MonoBehaviour
 
     [SerializeField]
     private Lexic.NameGenerator namegen;
+
+    Action<string> myAction;
 
     #region Subscribe
     private void OnEnable()
@@ -129,6 +132,59 @@ public class Simulator : MonoBehaviour
 
         return 5;
 
+    }
+    void InvokeAction()
+    {
+        myAction?.Invoke("hello");
+    }
+
+    void SubscribeToAction()
+    {
+        myAction += Print;
+    }
+
+    void Print(string s)
+    {
+        print(s);
+    }
+
+    IEnumerator Upload()
+    {
+        List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
+        formData.Add(new MultipartFormDataSection("field1=foo&field2=bar"));
+        formData.Add(new MultipartFormFileSection("my file data", "myfile.txt"));
+
+        UnityWebRequest www = UnityWebRequest.Post("https://www.my-server.com/myform", formData);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log("Form upload complete!");
+        }
+    }
+
+    IEnumerator GetText()
+    {
+        UnityWebRequest www =
+        UnityWebRequest.Get("http://example.com/script.php?var1=value2&var2=value2");
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            // Show results as text
+            Debug.Log(www.downloadHandler.text);
+
+            // Or retrieve results as binary data
+            byte[] results = www.downloadHandler.data;
+        }
     }
 
 
