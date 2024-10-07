@@ -15,7 +15,7 @@ public class SendDataPhP : MonoBehaviour
     private void NewPlayerAction(string arg1, string arg2, int arg3, float arg4, DateTime arg5)
     {
         Debug.Log("Hola");
-        SendDataToServer(arg1, arg2, arg3, arg4, arg5);
+        StartCoroutine(SendDataToServer(arg1, arg2, arg3, arg4, arg5));
         CallbackEvents.OnAddPlayerCallback?.Invoke(99);
 
     }
@@ -37,7 +37,7 @@ public class SendDataPhP : MonoBehaviour
         string json = JsonUtility.ToJson(jsonData);
 
         // Crear una solicitud POST
-        using (UnityWebRequest request = UnityWebRequest.Post("https://tuservidor.com/tu_endpoint.php", json))
+        using (UnityWebRequest request = UnityWebRequest.Post("https://citmalumnes.upc.es/~danielmc11/userInfo.php", json))
         {
             request.method = UnityWebRequest.kHttpVerbPOST; // Configurar como POST
             request.SetRequestHeader("Content-Type", "application/json"); // Establecer tipo de contenido
