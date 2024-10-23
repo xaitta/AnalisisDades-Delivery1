@@ -55,8 +55,7 @@ public class Simulator : MonoBehaviour
             int rdm = Random.Range(0, coutryNames.Length);
             Countries.Add(((AllCountries)rdm).ToString());
         }
-        MakeOnePlayer();
-       
+        MakeOnePlayer();       
      
     }
 
@@ -73,9 +72,6 @@ public class Simulator : MonoBehaviour
         _currentDate = GetNewPlayerDate();
         AddNewPlayer(_currentDate);
     }
-
-    
-   
 
     void AddNewPlayer(DateTime dateTime)
     {

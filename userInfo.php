@@ -1,25 +1,51 @@
 <?php
-$servername = "localHost";
+// Configuración de conexión a la base de datos
+$servername = "localhost"; // Nota: "localhost" debe estar en minúsculas
 $username = "danielmc11";
 $password = "45933702b";
 $dbname = "danielmc11";
 
-$conn = new mysqli($servername, $username, $password,$dbname);
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if($conn->connect_error){
-    die("Conenction failed: " . $conn->connect_error);
-
+// Verificar la conexión
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode(["message" => "Error de conexión a la base de datos"]);
+    exit();
 }
-echo "Connected successfully";
 
-$sql = "INSERT INTO MyGuests (firstname, lastname, email) VALUES ('John', 'Doe', 'john@example.com')";
+// Leer el contenido del cuerpo de la solicitud
+$json = file_get_contents('php://input');
 
-if($conn->query($sql) === TRUE)
-{
-    $last_id = $conn->insert_id;
-    echo "New record created successfully. Last inserted ID is: " . $last_id;
+// Decodificar el JSON
+$data = json_decode($json);
+
+// Comprobar si la decodificación fue exitosa
+if (json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode(["message" => "Invalid JSON"]);
+    exit();
 }
-else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+
+// Acceder a los datos enviados
+$name = $data->name ?? '';
+$country = $data->country ?? '';
+$age = $data->age ?? 0;
+$gender = $data->gender ?? 0.0;
+$date = $data->date ?? '';
+
+// Preparar y ejecutar la consulta
+$stmt = $conn->prepare("INSERT INTO MyGuests (name, country, age, gender, date) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("ssids", $name, $country, $age, $gender, $date);
+
+if ($stmt->execute()) {
+    echo json_encode(["message" => "Datos guardados correctamente"]);
+} else {
+    http_response_code(500);
+    echo json_encode(["message" => "Error al guardar datos"]);
 }
+
+$stmt->close();
+$conn->close();
 ?>
