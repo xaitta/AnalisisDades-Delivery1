@@ -21,7 +21,7 @@ $date = $data->end_date ?? '';
 $sessionId = $data->session_id ?? 0;
 
 // Preparar y ejecutar la consulta
-$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_Id, endSessionDate, sessionId) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO EndSessionInfo (player_Id, endSessionDate, sessionId) VALUES (?, ?, ?)");
 $stmt->bind_param("isi", $playerId, $date, $sessionId);
 
 if ($stmt->execute()) {
