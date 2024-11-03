@@ -20,8 +20,8 @@ $playerId = $data->player_id ?? 0;
 $date = $data->start_date ?? '';
 
 // Preparar y ejecutar la consulta
-$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_id, start_date) VALUES (?, ?)");
-$stmt->bind_param("ssids", $playerId, $date);
+$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_Id, startSessionDate) VALUES (?, ?)");
+$stmt->bind_param("is", $playerId, $date);
 
 if ($stmt->execute()) {
     echo json_encode(["message" => "Datos guardados correctamente"]);

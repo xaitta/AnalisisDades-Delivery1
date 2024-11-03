@@ -18,10 +18,11 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 
 $playerId = $data->player_id ?? 0;
 $date = $data->end_date ?? '';
+$sessionId = $data->session_id ?? 0;
 
 // Preparar y ejecutar la consulta
-$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_id, end_date) VALUES (?, ?)");
-$stmt->bind_param("ssids", $playerId, $date);
+$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_Id, endSessionDate, sessionId) VALUES (?, ?, ?)");
+$stmt->bind_param("isi", $playerId, $date, $sessionId);
 
 if ($stmt->execute()) {
     echo json_encode(["message" => "Datos guardados correctamente"]);

@@ -24,6 +24,7 @@ public class End_SessionInfo
 {
     public uint player_id;
     public string end_date;
+    public int session_id;
 
 }
 
@@ -36,9 +37,10 @@ public class ItemBuyData
     public uint playerId;
 }
 
-
 public class SendDataPhP : MonoBehaviour
 {
+    int count = -1;
+    int countSession = -1;
 
     private const string serverUrl = "https://citmalumnes.upc.es/~danielmc11/";
 
@@ -61,7 +63,8 @@ public class SendDataPhP : MonoBehaviour
             date = date.ToString("o")
         };
         StartCoroutine(SendDataToServer(data, "userInfo.php"));
-        CallbackEvents.OnAddPlayerCallback?.Invoke(99);
+        count++;
+        CallbackEvents.OnAddPlayerCallback?.Invoke((uint)count);
     }
     public void SendNewSessionData( DateTime startSessionDate, uint playerId)
     {
@@ -71,7 +74,8 @@ public class SendDataPhP : MonoBehaviour
             start_date = startSessionDate.ToString("o")
         };
         StartCoroutine(SendDataToServer(data, "start_sessionInfo.php"));
-        CallbackEvents.OnNewSessionCallback?.Invoke(99);
+        countSession++;
+        CallbackEvents.OnNewSessionCallback?.Invoke((uint)count);
     }
 
     // Método para enviar datos de fin de sesión
@@ -80,10 +84,11 @@ public class SendDataPhP : MonoBehaviour
         End_SessionInfo data = new End_SessionInfo
         {
             player_id = playerId,
-            end_date = endSessionDate.ToString("o")           
+            end_date = endSessionDate.ToString("o"),
+            session_id = countSession
         };
         StartCoroutine(SendDataToServer(data, "end_sessionInfo.php"));
-        CallbackEvents.OnEndSessionCallback?.Invoke(99);
+        CallbackEvents.OnEndSessionCallback?.Invoke((uint)count);
     }
 
     // Método para enviar datos de compra de un ítem
@@ -96,14 +101,14 @@ public class SendDataPhP : MonoBehaviour
             date = date.ToString("o")
         };
         StartCoroutine(SendDataToServer(data, "onItemBuy.php"));
-        CallbackEvents.OnItemBuyCallback?.Invoke(99);
+        CallbackEvents.OnItemBuyCallback?.Invoke((uint)count);
     }
 
     private void NewPlayerAction(string arg1, string arg2, int arg3, float arg4, DateTime  arg5)
     {
         
         StartCoroutine(SendDataToServer(arg1, arg2, arg3, arg4, arg5));
-        CallbackEvents.OnAddPlayerCallback?.Invoke(99);
+        CallbackEvents.OnAddPlayerCallback?.Invoke((uint)count);
     }
 
     private IEnumerator SendDataToServer<T>(T data, string scriptName)
