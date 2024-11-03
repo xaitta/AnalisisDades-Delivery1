@@ -47,7 +47,7 @@ public class SendDataPhP : MonoBehaviour
     void OnEnable()
     {
         Simulator.OnNewPlayer += SendNewPlayerData;
-      //  Simulator.OnBuyItem += SendItemBuyData;
+        Simulator.OnBuyItem += SendItemBuyData;
         Simulator.OnEndSession += SendEndSessionData;
         Simulator.OnNewSession += SendNewSessionData;
     }

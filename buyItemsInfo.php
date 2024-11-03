@@ -16,14 +16,13 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 
 // Acceder a los datos enviados
 
-$itemId = $data->itemId ?? 0;
 $date = $data->date ?? '';
 $playerId = $data->playerId ?? 0;
 
 
 // Preparar y ejecutar la consulta
-$stmt = $conn->prepare("INSERT INTO BuyItemsInfo (itemId, date, playerId) VALUES (?, ?, ?)");
-$stmt->bind_param("isi", $itemId, $date,$playerId);
+$stmt = $conn->prepare("INSERT INTO BuyItemsInfo (date, playerId) VALUES (?, ?)");
+$stmt->bind_param("si", $date,$playerId);
 
 if ($stmt->execute()) {
     echo json_encode(["message" => "Datos guardados correctamente"]);
