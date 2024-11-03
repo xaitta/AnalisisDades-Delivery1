@@ -47,7 +47,7 @@ public class SendDataPhP : MonoBehaviour
     void OnEnable()
     {
         Simulator.OnNewPlayer += SendNewPlayerData;
-        //Simulator.OnBuyItem += SendItemBuyData;
+      //  Simulator.OnBuyItem += SendItemBuyData;
         Simulator.OnEndSession += SendEndSessionData;
         Simulator.OnNewSession += SendNewSessionData;
     }
@@ -97,10 +97,10 @@ public class SendDataPhP : MonoBehaviour
         ItemBuyData data = new ItemBuyData
         {
             playerId = playerId,
-            itemId = itemId,
+            itemId = itemId,    
             date = date.ToString("o")
         };
-        StartCoroutine(SendDataToServer(data, "onItemBuy.php"));
+        StartCoroutine(SendDataToServer(data, "buyItemsInfo.php"));
         CallbackEvents.OnItemBuyCallback?.Invoke((uint)count);
     }
 
