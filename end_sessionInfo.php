@@ -15,15 +15,13 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 // Acceder a los datos enviados
-$name = $data->name ?? '';
-$country = $data->country ?? '';
-$age = $data->age ?? 0;
-$gender = $data->gender ?? 0.0;
-$date = $data->date ?? '';
+
+$playerId = $data->player_id ?? 0;
+$date = $data->end_date ?? '';
 
 // Preparar y ejecutar la consulta
-$stmt = $conn->prepare("INSERT INTO MyGuests (name, country, age, gender, date) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param("ssids", $name, $country, $age, $gender, $date);
+$stmt = $conn->prepare("INSERT INTO StartSessionInfo (player_id, end_date) VALUES (?, ?)");
+$stmt->bind_param("ssids", $playerId, $date);
 
 if ($stmt->execute()) {
     echo json_encode(["message" => "Datos guardados correctamente"]);
