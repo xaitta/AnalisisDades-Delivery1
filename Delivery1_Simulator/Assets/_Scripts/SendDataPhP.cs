@@ -47,7 +47,7 @@ public class SendDataPhP : MonoBehaviour
         Simulator.OnNewPlayer += SendNewPlayerData;
         //Simulator.OnBuyItem += SendItemBuyData;
         //Simulator.OnEndSession += SendEndSessionData;
-        //Simulator.OnNewSession += SendNewSessionData;
+        Simulator.OnNewSession += SendNewSessionData;
     }
 
     public void SendNewPlayerData(string name, string country, int age, float gender, DateTime date)
@@ -61,6 +61,7 @@ public class SendDataPhP : MonoBehaviour
             date = date.ToString("o")
         };
         StartCoroutine(SendDataToServer(data, "userInfo.php"));
+        CallbackEvents.OnAddPlayerCallback?.Invoke(99);
     }
     public void SendNewSessionData( DateTime startSessionDate, uint playerId)
     {
