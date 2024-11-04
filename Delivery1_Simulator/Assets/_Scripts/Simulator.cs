@@ -67,8 +67,8 @@ public class Simulator : MonoBehaviour
             Debug.Log("Finished");
             return;
         }
+        
 
-        MakeOnePlayer();
         _currentDate = GetNewPlayerDate();
         AddNewPlayer(_currentDate);
     }

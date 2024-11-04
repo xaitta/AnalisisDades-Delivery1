@@ -39,8 +39,8 @@ public class ItemBuyData
 
 public class SendDataPhP : MonoBehaviour
 {
-    int count = -1;
-    int countSession = -1;
+    int count = 0;
+    int countSession = 0;
 
     private const string serverUrl = "https://citmalumnes.upc.es/~danielmc11/";
 
@@ -50,6 +50,14 @@ public class SendDataPhP : MonoBehaviour
         Simulator.OnBuyItem += SendItemBuyData;
         Simulator.OnEndSession += SendEndSessionData;
         Simulator.OnNewSession += SendNewSessionData;
+    }
+
+    private void OnDisable()
+    {
+        Simulator.OnNewPlayer -= SendNewPlayerData;
+        Simulator.OnBuyItem -= SendItemBuyData;
+        Simulator.OnEndSession -= SendEndSessionData;
+        Simulator.OnNewSession -= SendNewSessionData;
     }
 
     public void SendNewPlayerData(string name, string country, int age, float gender, DateTime date)
@@ -92,26 +100,26 @@ public class SendDataPhP : MonoBehaviour
     }
 
     // Método para enviar datos de compra de un ítem
-    public void SendItemBuyData(int itemId,DateTime date, uint playerId)
+    public void SendItemBuyData(int itemId, DateTime date, uint playerId)
     {
         ItemBuyData data = new ItemBuyData
         {
             playerId = playerId,
-            itemId = itemId,    
+            itemId = itemId,
             date = date.ToString("o")
         };
-        StartCoroutine(SendDataToServer(data, "buyItemsInfo.php"));
+
+        StartCoroutine(SendDataToServer(data, "buyItemsInfo.php", OnItemBuySuccessCallback));
+    }
+
+    // Callback que se invoca al confirmar que la compra fue enviada correctamente
+    private void OnItemBuySuccessCallback()
+    {
         CallbackEvents.OnItemBuyCallback?.Invoke((uint)count);
     }
 
-    private void NewPlayerAction(string arg1, string arg2, int arg3, float arg4, DateTime  arg5)
-    {
-        
-        StartCoroutine(SendDataToServer(arg1, arg2, arg3, arg4, arg5));
-        CallbackEvents.OnAddPlayerCallback?.Invoke((uint)count);
-    }
 
-    private IEnumerator SendDataToServer<T>(T data, string scriptName)
+    private IEnumerator SendDataToServer<T>(T data, string scriptName, Action successCallback = null)
     {
         var json = JsonUtility.ToJson(data);
 
@@ -131,72 +139,10 @@ public class SendDataPhP : MonoBehaviour
             else
             {
                 Debug.Log($"Datos enviados correctamente a {scriptName}: {request.downloadHandler.text}");
+                successCallback?.Invoke();  // Llama al callback si se envió con éxito
             }
         }
     }
 
-
-    private IEnumerator SendDataToServer(string name, string country, int age, float gender, DateTime dateTime)
-    {
-        // Now create an instance of the UserInfo class
-        UserInfo userInfo = new UserInfo
-        {
-            name = name,
-            country = country,
-            age = age,
-            gender = gender,
-            date = dateTime.ToString("o") // Format in ISO 8601
-        };
-
-
-        var json = JsonUtility.ToJson(userInfo);
-
-        // Crear una solicitud POST
-        using (UnityWebRequest request = new UnityWebRequest("https://citmalumnes.upc.es/~danielmc11/userInfo.php", UnityWebRequest.kHttpVerbPOST))
-        {
-            // Establecer el cuerpo de la solicitud
-            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-
-            // Configurar el tipo de contenido
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            // Enviar la solicitud y esperar la respuesta
-            yield return request.SendWebRequest();
-
-            // Manejar errores
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError($"Error al enviar datos: {request.error}");
-            }
-            else
-            {
-                Debug.Log("Datos enviados correctamente: " + request.downloadHandler.text);
-                CallbackEvents.OnAddPlayerCallback?.Invoke(8);
-            }
-        }
-    }
-
-    IEnumerator SendDataToServer(string field, string data, string script)
-    {
-        WWWForm form = new WWWForm();
-        form.AddField(field, data);
-
-        UnityWebRequest request = UnityWebRequest.Post("https://citmalumnes.upc.es/~danielmc11/" + script, form);
-        yield return request.SendWebRequest();
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError($"Error al enviar datos: {request.error}");
-        }
-        else
-        {
-            Debug.Log("Datos enviados correctamente: " + request.downloadHandler.text);
-            CallbackEvents.OnAddPlayerCallback?.Invoke(8);
-        }
-
-
-    }
 
 }
