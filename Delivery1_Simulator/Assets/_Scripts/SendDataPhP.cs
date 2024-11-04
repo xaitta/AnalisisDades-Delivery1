@@ -13,13 +13,14 @@ public class UserInfo
     public float gender;
     public string date;
 }
-
+[System.Serializable]
 public class Start_SessionInfo
 {
     public uint player_id;
     public string start_date;
     
 }
+[System.Serializable]
 public class End_SessionInfo
 {
     public uint player_id;
@@ -86,7 +87,7 @@ public class SendDataPhP : MonoBehaviour
         CallbackEvents.OnNewSessionCallback?.Invoke((uint)count);
     }
 
-    // Método para enviar datos de fin de sesión
+   
     public void SendEndSessionData(DateTime endSessionDate, uint playerId)
     {
         End_SessionInfo data = new End_SessionInfo
@@ -99,7 +100,7 @@ public class SendDataPhP : MonoBehaviour
         CallbackEvents.OnEndSessionCallback?.Invoke((uint)count);
     }
 
-    // Método para enviar datos de compra de un ítem
+   
     public void SendItemBuyData(int itemId, DateTime date, uint playerId)
     {
         ItemBuyData data = new ItemBuyData
